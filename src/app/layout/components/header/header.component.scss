@@ -1,73 +1,70 @@
 :host ::ng-deep header {
-    padding: .5rem 2rem;
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+  margin-bottom: 1rem;
+
+  .title {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
     align-items: center;
-    width: 100%;
-    background-color: white;
-    border-left: 1px solid #f2f4f6;
-    margin-bottom: 1rem;
+    gap: 1rem;
 
-    .title {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-
-        h2 {
-            font-size: 1.2rem;
-        }
-
-        button {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50px;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border: none;
-
-            i {
-                font-size: 1rem;
-            }
-        }
+    h2 {
+      font-size: 1.2rem;
     }
 
-    .options {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    button {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border: none;
 
-        .p-dropdown-custom {
-
-            .p-inputwrapper {
-                border: none !important;
-                box-shadow: none !important;
-            }
-
-            .p-inputtext {
-                padding: 0rem 0.75rem 0rem 2.5rem !important;
-            }
-
-            .p-dropdown-trigger {
-                width: 2rem;
-            }
-        }
-
-        .p-icon-field .p-input-icon {
-            z-index: 2 !important;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
+      i {
+        font-size: 1rem;
+      }
     }
+  }
+
+  .options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .p-dropdown-custom {
+      .p-inputwrapper {
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .p-inputtext {
+        padding: 0rem 0.75rem 0rem 2.5rem !important;
+      }
+
+      .p-dropdown-trigger {
+        width: 2rem;
+      }
+    }
+
+    .p-icon-field .p-input-icon {
+      z-index: 2 !important;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+  }
 }
 
-
 @media screen and (max-width: 991px) {
-    header {
-        button {
-            display: flex;
-        }
+  header {
+    button {
+      display: flex;
     }
+  }
 }
