@@ -1,0 +1,109 @@
+<p-table
+  #dt1
+  [value]="currentData"
+  styleClass="p-datatable-striped p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem', cursor: 'pointer' }"
+  selectionMode="single"
+  [loading]="loading"
+  [scrollable]="true"
+  [virtualScroll]="true"
+  [virtualScrollItemSize]="40"
+  scrollHeight="calc(100vh - 95px)"
+  [resizableColumns]="true"
+  [globalFilterFields]="globalFilterFields"
+  (onFilter)="onTableFilter($event.filteredValue)"
+>
+  <ng-template pTemplate="caption">
+    <p-iconField iconPosition="left">
+      <p-inputIcon>
+        <i class="pi pi-search"></i>
+      </p-inputIcon>
+      <input
+        pInputText
+        type="text"
+        (input)="dt1.filterGlobal($any($event.target).value, 'contains')"
+        placeholder="Rechercher"
+        style="height: 20px"
+      />
+    </p-iconField>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th
+        *ngFor="let col of columns"
+        pResizableColumn
+        [ngStyle]="{ flex: '1 1 auto', 'min-width': '100px', 'max-width': '300px' }"
+      >
+        {{ col.header }}
+      </th>
+    </tr>
+    <tr *ngIf="enableColumnFilters">
+      <th
+        *ngFor="let col of columns"
+        [ngStyle]="{ flex: '1 1 auto', 'min-width': '100px', 'max-width': '300px' }"
+      >
+        <p-columnFilter
+          type="text"
+          [field]="col.field"
+          ariaLabel="Filter Name"
+          matchMode="contains"
+        />
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-product>
+    <tr
+      [pSelectableRow]="product"
+      (click)="onRowClicked(product)"
+      style="font-size: 0.8rem"
+    >
+      <td
+        *ngFor="let col of columns"
+        [ngStyle]="{ flex: '1 1 auto', 'min-width': '50px', 'max-width': '300px' }"
+      >
+        <ng-container
+          *ngIf="col.field.includes('At') || col.field.includes('date'); else otherField"
+        >
+          {{ product[col.field] | dateFormat }}
+        </ng-container>
+
+        <ng-template #otherField>
+          <ng-container *ngIf="col.field === 'status'; else percentageField">
+            <p-tag
+              [value]="getStatusLabel(product[col.field])"
+              [severity]="getSeverity(product[col.field])"
+              [rounded]="true"
+            ></p-tag>
+          </ng-container>
+
+          <ng-template #percentageField>
+            <ng-container
+              *ngIf="
+                col.field === 'pourcentage' &&
+                  product[col.field] !== null &&
+                  product[col.field] !== undefined;
+                else defaultContent
+              "
+            >
+              {{ product[col.field] | number : "1.2-2" }}%
+            </ng-container>
+
+            <ng-template #defaultContent>
+              <div class="comment-container" [title]="product[col.field]">
+                {{ product[col.field] }}
+              </div>
+            </ng-template>
+          </ng-template>
+        </ng-template>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns.length">Aucunes données</td>
+    </tr>
+  </ng-template>
+</p-table>

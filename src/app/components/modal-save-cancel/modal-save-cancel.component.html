@@ -1,0 +1,22 @@
+<p-dialog
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [closable]="false"
+  [header]="header"
+  [style]="{ width: width, 'min-height': '20rem' }"
+>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      min-height: 20rem;
+      justify-content: space-between;
+    "
+  >
+    <ng-content></ng-content>
+    <div style="display: flex; justify-content: end; padding-top: 3rem; gap: 1rem">
+      <p-button label="Annuler" severity="secondary" (click)="onCancel()" />
+      <p-button label="Sauvegarder" (click)="onSave()" />
+    </div>
+  </div>
+</p-dialog>

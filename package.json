@@ -1,5 +1,5 @@
 {
-  "name": "prime-ng-starter",
+  "name": "smart-pin-web",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -18,7 +18,12 @@
     "@angular/platform-browser": "^17.2.0",
     "@angular/platform-browser-dynamic": "^17.2.0",
     "@angular/router": "^17.2.0",
+    "@fortawesome/fontawesome-free": "^6.6.0",
     "@npmcli/package-json": "^5.2.0",
+    "chart.js": "^4.4.4",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "moment": "^2.30.1",
+    "ngx-barcode6": "^1.0.25",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.4",
     "rxjs": "~7.8.0",

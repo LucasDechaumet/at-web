@@ -1,0 +1,23 @@
+.speed-dial-custom {
+  position: absolute;
+  bottom: 170px;
+  right: 70px;
+  z-index: 10000;
+}
+
+/* fichier mouvement.component.scss ou modal-save-cancel.component.scss */
+::ng-deep .custom-dropdown .p-dropdown-label {
+  padding: 0.25rem 0.5rem; /* Réduit le padding pour diminuer la hauteur */
+  font-size: 1rem; /* Ajuste la taille de la police si nécessaire */
+  line-height: 1.4rem; /* Ajuste la hauteur de ligne */
+}
+
+::ng-deep .custom-dropdown .p-dropdown {
+  height: 2rem; /* Réduit la hauteur du conteneur du dropdown */
+}
+
+::ng-deep .p-message {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+}

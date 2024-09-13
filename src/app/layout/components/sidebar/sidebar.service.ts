@@ -10,8 +10,8 @@ export class SidebarService {
   sidebarDisplayState: BehaviorSubject<boolean> = new BehaviorSubject(false);
   sidebarConfig = {
     defaultColor: "rgba(41, 50, 65, .8)",
-    activeColor: "#14b8a6",
-    hoverColor: "#14b8a6",
+    activeColor: "#0ea5e9",
+    hoverColor: "#0ea5e9",
     width: "3rem",
   };
   constructor(private http: HttpClient) {}

@@ -1,32 +1,25 @@
-<header [style]="{'height': height}">
+<header [style]="{ height: height }">
+  <div class="title">
+    <button id="sidebar-toggle" (click)="onToggleSidebar()">
+      <i class="pi pi-bars"></i>
+    </button>
 
-    <div class="title">
+    <h2>{{ moduleTitle }}</h2>
+  </div>
 
-        <button id="sidebar-toggle"
-                (click)="onToggleSidebar()">
-            <i class="pi pi-bars"></i>
-        </button>
-
-        <h2>{{moduleTitle}}</h2>
-
-    </div>
-
-
-    <div class="options">
-        <p-iconField iconPosition="left">
-            <p-inputIcon (click)="dropdown.show()"
-                         styleClass="pi pi-sitemap" />
-            <p-dropdown #dropdown
-                        appendTo="body"
-                        [options]="cities"
-                        [(ngModel)]="selectedCity"
-                        class="p-dropdown-custom"
-                        optionLabel="name" />
-        </p-iconField>
-    </div>
-
-
-
-
-
+  <div class="options">
+    <p-dropdown
+      #dropdown
+      appendTo="body"
+      [filter]="true"
+      filterBy="name"
+      [options]="stores"
+      [(ngModel)]="selectedStore"
+      (onChange)="onStoreChange()"
+      class="p-dropdown-custom"
+      optionLabel="name"
+      placeholder="Choisir un magasin"
+    />
+  </div>
 </header>
+<p-toast />

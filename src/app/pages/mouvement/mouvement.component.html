@@ -1,0 +1,105 @@
+<app-tableau-classique
+  [columns]="columns"
+  [currentData]="data"
+  [loading]="loading"
+></app-tableau-classique>
+
+<p-speedDial [model]="items" direction="up" class="speed-dial-custom"></p-speedDial>
+
+<app-modal-save-cancel
+  (save)="onSave()"
+  (cancel)="onCancel()"
+  [header]="'Ajouter un mouvement'"
+  [displayDialog]="displayDialog"
+  [width]="'60rem'"
+>
+  <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem">
+    <h3>Motif du mouvement</h3>
+    <p-dropdown
+      [options]="motif"
+      [(ngModel)]="selectedMotif"
+      optionLabel="label"
+      placeholder="Choisir un motif"
+      class="custom-dropdown"
+      (onChange)="onMotifChange()"
+    />
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 1rem">
+    <!-- Afficher le champ QR code uniquement si showQrInput est vrai -->
+    <div *ngIf="showQrInput">
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-qrcode" />
+        <input
+          #qrCodeInput
+          (keydown.enter)="onEnterPress()"
+          type="text"
+          [(ngModel)]="qrCodeValue"
+          pInputText
+          placeholder="QR code"
+        />
+      </p-iconField>
+    </div>
+
+    <!-- Afficher le champ Code barre uniquement si showBarcodeInput est vrai -->
+    <div *ngIf="showBarcodeInput">
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-barcode" />
+        <input
+          #barcodeInput
+          (keydown.enter)="onEnterPress()"
+          type="text"
+          [(ngModel)]="barcodeValue"
+          pInputText
+          placeholder="Code barre"
+        />
+      </p-iconField>
+    </div>
+
+    <!-- Afficher le nombre d'article dans le tableau scannedEpc -->
+    <div
+      *ngIf="scannedItem && scannedItem.length > 0"
+      style="display: flex; align-items: center; gap: 1rem"
+    >
+      <h3>Articles scannés</h3>
+      <p-badge
+        *ngIf="scannedItem && scannedItem.length > 0"
+        [value]="scannedItem.length"
+        severity="info"
+        styleClass="p-mr-2"
+      ></p-badge>
+    </div>
+  </div>
+
+  <p-messages
+    *ngIf="messages && messages.length > 0"
+    class="p-messages-custom"
+    [(value)]="messages"
+    [enableService]="false"
+  ></p-messages>
+
+  <p-table
+    *ngIf="scannedItem && scannedItem.length > 0"
+    [value]="scannedItem"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [scrollable]="true"
+    scrollHeight="20rem"
+    styleClass="p-datatable-striped p-datatable-sm"
+    [style]="{ 'padding-top': '1rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Produit</th>
+        <th>Couleur</th>
+        <th>Taille</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-scannedEpc>
+      <tr>
+        <td>{{ scannedEpc.libProduit }}</td>
+        <td>{{ scannedEpc.libColorisModifie }}</td>
+        <td>{{ scannedEpc.libTaille }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</app-modal-save-cancel>

@@ -1,0 +1,115 @@
+<div style="display: flex; align-items: center">
+  <p-inputSwitch
+    [(ngModel)]="stockNiveau"
+    (onChange)="onSwitchChange()"
+    [style]="{ transform: 'scale(0.7)', marginTop: '1%' }"
+  ></p-inputSwitch>
+  <span style="margin-left: 10px">
+    Stock par niveau {{ stockNiveau ? "activé" : "désactivé" }}
+  </span>
+
+  <span style="margin-left: 10px; font-weight: bold">
+    ({{ numberOfItems }} {{ numberOfItems === 1 ? "article" : "articles" }})
+  </span>
+
+  <div style="flex-grow: 1; cursor: pointer">
+    <p-breadcrumb
+      *ngIf="stockNiveau"
+      [style]="{
+        backgroundColor: 'transparent',
+        border: 'none',
+        transform: 'scale(0.9)',
+        padding: '1.5px',
+      }"
+      [model]="items"
+      [home]="home"
+    ></p-breadcrumb>
+  </div>
+</div>
+
+<app-tableau-classique
+  [columns]="columns"
+  [currentData]="currentData"
+  [loading]="loading"
+  (rowClicked)="onRowClicked($event)"
+  [enableColumnFilters]="true"
+  (tableFilter)="onTableFilter($event)"
+></app-tableau-classique>
+
+<p-sidebar [(visible)]="sidebarVisible" position="right" [style]="{ width: '400px' }">
+  <ng-template pTemplate="header">
+    <div>
+      <h4 style="font-weight: bold">{{ selectedProduct?.libProduit }}</h4>
+      <p style="font-size: 0.9rem">
+        {{ selectedProduct?.libColorisModifie }} - {{ selectedProduct?.libTaille }}
+      </p>
+      <p style="font-size: 0.85rem">{{ selectedProduct?.sku }}</p>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="product-details">
+      <div class="product-image">
+        <img [src]="imageUrl" alt="Photo du produit" />
+      </div>
+
+      <div class="product-stock">
+        <h3>Stock</h3>
+        <p>
+          Stock Magasin :
+          {{
+            selectedProductStockRfid !== null && selectedProductStockRfid !== undefined
+              ? selectedProductStockRfid
+              : "N/A"
+          }}
+        </p>
+        <p>
+          Stock Dépôt :
+          {{
+            selectedProductStock?.stockDispoDepot !== null &&
+            selectedProductStock?.stockDispoDepot !== undefined
+              ? selectedProductStock.stockDispoDepot
+              : "N/A"
+          }}
+        </p>
+        <p>
+          Stock E-commerce :
+          {{
+            selectedProductStock?.stockDedieEcommerce !== null &&
+            selectedProductStock?.stockDedieEcommerce !== undefined
+              ? selectedProductStock.stockDedieEcommerce
+              : "N/A"
+          }}
+        </p>
+        <p>
+          Livraison prévue :
+          {{
+            selectedProductStock?.livraisonPrevue !== null &&
+            selectedProductStock?.livraisonPrevue !== undefined
+              ? selectedProductStock.livraisonPrevue
+              : "N/A"
+          }}
+        </p>
+        <p>
+          Quantité en livraison :
+          {{
+            selectedProductStock?.quantiteEnLivraison !== null &&
+            selectedProductStock?.quantiteEnLivraison !== undefined
+              ? selectedProductStock.quantiteEnLivraison
+              : "N/A"
+          }}
+        </p>
+      </div>
+      <div class="product-stock">
+        <h3 style="padding-top: 1rem">Code barre</h3>
+        <ngx-barcode6
+          [bc-value]="barcode"
+          [bc-format]="'CODE128'"
+          [bc-width]="2"
+          [bc-height]="100"
+          [bc-display-value]="true"
+        ></ngx-barcode6>
+      </div>
+    </div>
+  </ng-template>
+</p-sidebar>

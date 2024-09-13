@@ -10,6 +10,7 @@ import { ISidebarItem } from "./ISidebarItem";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { Observable } from "rxjs";
 import { CommonModule } from "@angular/common";
+import { AuthService } from "../../../services/api/auth.service";
 
 @Component({
   selector: "app-sidebar",
@@ -24,17 +25,12 @@ export class SidebarComponent {
   public router: Router = inject(Router);
   items: ISidebarItem[] = [
     {
-      title: "Dashboards",
+      title: "Articles",
       children: [
         {
-          title: "Expéditions",
-          icon: "pi-box",
-          path: "/expedition",
-        },
-        {
-          title: "Mouvement",
-          icon: "pi-arrow-right-arrow-left",
-          path: "/mouvement",
+          title: "Stock",
+          icon: "pi-warehouse",
+          path: "/stock",
         },
         {
           title: "Inventaire",
@@ -42,19 +38,102 @@ export class SidebarComponent {
           path: "/inventaire",
         },
         {
-          title: "Remise colis web",
-          icon: "pi-at",
-          path: "/remise-colis-web",
+          title: "Mouvement",
+          icon: "pi-arrow-right-arrow-left",
+          path: "/mouvement",
+        },
+      ],
+    },
+    {
+      title: "Colis",
+      children: [
+        {
+          title: "Réception",
+          icon: "pi-truck",
+          children: [
+            {
+              title: "En attente",
+              icon: "pi-list",
+              path: "/reception/attendu",
+            },
+            {
+              title: "Historique",
+              icon: "pi-list-check",
+              path: "/reception/historique",
+            },
+          ],
+        },
+        {
+          title: "Expédition",
+          icon: "pi-box",
+          path: "/expedition",
         },
         {
           title: "Enlevement",
           icon: "pi-cart-minus",
-          path: "/enlevement",
+          children: [
+            {
+              title: "En attente",
+              icon: "pi-list",
+              path: "/enlevement/attendu",
+            },
+            {
+              title: "Historique",
+              icon: "pi-list-check",
+              path: "/enlevement/historique",
+            },
+          ],
         },
         {
-          title: "Réception",
-          icon: "pi-truck",
-          path: "/reception",
+          title: "Remise colis web",
+          icon: "pi-at",
+          children: [
+            {
+              title: "En attente",
+              icon: "pi-list",
+              path: "/remise-colis-web/attendu",
+            },
+            {
+              title: "Historique",
+              icon: "pi-list-check",
+              path: "/remise-colis-web/historique",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Admin",
+      children: [
+        {
+          title: "Gestion des Utilisateurs",
+          icon: "pi-user-edit",
+          path: "/utilisateurs",
+        },
+        {
+          title: "Gestion des Accès",
+          icon: "pi-key",
+          path: "/acces",
+        },
+        {
+          title: "Gestion des Magasins",
+          icon: "pi-shop",
+          path: "/magasins",
+        },
+        {
+          title: "Paramètres Généraux",
+          icon: "pi-sliders-h",
+          path: "/parametres-generaux",
+        },
+      ],
+    },
+    {
+      title: "Support",
+      children: [
+        {
+          title: "PDA",
+          icon: "pi-mobile",
+          path: "/pda",
         },
       ],
     },
@@ -62,16 +141,24 @@ export class SidebarComponent {
       title: "Compte",
       children: [
         {
-          title: "Paramètre",
+          title: "Guide utilisateur",
+          icon: "pi-info-circle",
+          path: "/guide-utilisateur",
+        },
+        {
+          title: "Paramètres",
           icon: "pi-cog",
+          path: "parametres",
         },
         {
           title: "Déconnexion",
           icon: "pi-sign-out",
+          path: "signout",
         },
       ],
     },
   ];
+
   logoPaths = {
     logoFull:
       "https://www.familyvillagecostieres-sud.com/-/media/familyvillagecostieressud/images/enseignes/logos/logo_armand_thiery_noir_2_lignes_hd.png?as=0&w=342&hash=6E9D52E72E6037B7F90C5609707F8DC6",
@@ -81,7 +168,7 @@ export class SidebarComponent {
     window.innerWidth > 991
       ? this.logoPaths.logoSingle
       : this.logoPaths.logoFull;
-  constructor(private renderer: Renderer2) {
+  constructor(private renderer: Renderer2, private authService: AuthService) {
     /**
      * This events get called by all clicks on the page
      */
@@ -111,6 +198,8 @@ export class SidebarComponent {
   onItemClick(item: ISidebarItem): void {
     if (item?.children?.length) {
       item.collapsed = !item.collapsed;
+    } else if (item.path == "signout") {
+      this.authService.signOut();
     } else {
       this.router.navigateByUrl(item.path as any);
     }

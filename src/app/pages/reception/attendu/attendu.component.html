@@ -1,0 +1,17 @@
+<app-tableau-classique
+  [columns]="columns"
+  [currentData]="data"
+  [loading]="loading"
+  (rowClicked)="onRowClicked($event)"
+></app-tableau-classique>
+
+<p-sidebar [(visible)]="sidebarVisible" position="right">
+  <p-timeline [value]="events">
+    <ng-template pTemplate="content" let-event>
+      <small class="p-text-secondary">{{ event.date }}</small>
+    </ng-template>
+    <ng-template pTemplate="opposite" let-event>
+      {{ event.status }}
+    </ng-template>
+  </p-timeline>
+</p-sidebar>

@@ -1,0 +1,192 @@
+<app-tableau-classique
+  [columns]="columns"
+  [currentData]="inventoryData"
+  [loading]="loading"
+  [enableColumnFilters]="false"
+  (rowClicked)="onRowClicked($event)"
+></app-tableau-classique>
+
+<p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
+  <ng-template pTemplate="header">
+    <span class="header-title">
+      Inventaire démarrée le {{ selectedInventory?.createdAt | date : "dd/MM/yyyy" }} à
+      {{ selectedInventory?.createdAt | date : "HH:mm" }}, il est
+      {{ selectedInventory ? wichStatusIs(selectedInventory) : "Inconnu" }} depuis le
+      {{ selectedInventory?.dateStatus | date : "dd/MM/yyyy" }} à
+      {{ selectedInventory?.dateStatus | date : "HH:mm" }}
+    </span>
+  </ng-template>
+  <div class="content">
+    <div class="seuil-container">
+      <!-- Knob items for thresholds -->
+      <div class="knob-item">
+        <p-knob
+          [(ngModel)]="seuil1"
+          [valueTemplate]="seuil1.toFixed(2) + '%'"
+          [size]="150"
+          [step]="0.01"
+          [min]="95"
+          [max]="100"
+          [readonly]="true"
+          valueColor="#dc3545"
+        ></p-knob>
+        <div class="knob-label-container">
+          <i
+            class="pi pi-info-circle"
+            style="color: #dc3545"
+            pTooltip="Test"
+            tooltipPosition="bottom"
+          ></i>
+          <span class="knob-label" style="color: #dc3545">Seuil 1</span>
+        </div>
+      </div>
+      <div class="knob-item">
+        <p-knob
+          [(ngModel)]="seuil2"
+          [valueTemplate]="seuil2.toFixed(2) + '%'"
+          [size]="150"
+          [step]="0.01"
+          [min]="95"
+          [max]="100"
+          [readonly]="true"
+          valueColor="#ffc107"
+        ></p-knob>
+        <div class="knob-label-container">
+          <i
+            class="pi pi-info-circle"
+            style="color: #ffc107"
+            pTooltip="test"
+            tooltipPosition="bottom"
+          ></i>
+          <span class="knob-label" style="color: #ffc107">Seuil 2</span>
+        </div>
+      </div>
+      <div class="knob-item">
+        <p-knob
+          [(ngModel)]="seuil3"
+          [valueTemplate]="seuil3.toFixed(2) + '%'"
+          [size]="150"
+          [step]="0.01"
+          [min]="95"
+          [max]="100"
+          [readonly]="true"
+          valueColor="#28a745"
+        ></p-knob>
+        <div class="knob-label-container">
+          <i
+            class="pi pi-info-circle"
+            [style.color]=""
+            pTooltip="test"
+            tooltipPosition="bottom"
+          ></i>
+          <span class="knob-label" style="color: #28a745">Seuil 3</span>
+        </div>
+      </div>
+    </div>
+    <div class="option-container">
+      <h3>{{ pourcentageLabel }},</h3>
+      <h3 style="padding-bottom: 2rem" *ngIf="epcMissing > 0; else noMissing">
+        avec {{ selectedInventory?.quantiteTotal }} articles détectés mais
+        {{ epcMissing }} manquants.
+      </h3>
+      <ng-template #noMissing>
+        <h3 style="padding-bottom: 2rem">
+          avec {{ selectedInventory?.quantiteTotal }} articles détectés, rien n'a été
+          oublié !
+        </h3>
+      </ng-template>
+      <div class="knob-item">
+        <p-knob
+          [(ngModel)]="pourcentage"
+          [valueTemplate]="pourcentage?.toFixed(2) + '%'"
+          [size]="200"
+          [step]="0.01"
+          [min]="95"
+          [max]="100"
+          [readonly]="true"
+          [valueColor]="colorKnob"
+        ></p-knob>
+        <div style="padding-bottom: 4rem" class="knob-label-container">
+          <i
+            class="pi pi-info-circle"
+            [style.color]="colorKnob"
+            pTooltip="Pourcentage d'articles détectés"
+            tooltipPosition="bottom"
+          ></i>
+          <span class="knob-label" [style.color]="colorKnob">Pourcentage atteint</span>
+        </div>
+      </div>
+      <div class="buttonsOption">
+        <p-toast />
+        <p-confirmDialog />
+        <p-dialog
+          header="Nouvel objectif"
+          [modal]="true"
+          [(visible)]="seuilDialogVisible"
+        >
+          <p style="white-space: nowrap; padding-bottom: 1.5rem">
+            Choisissez un nouveau seuil à atteindre pour cet inventaire
+          </p>
+          <div style="display: flex">
+            <p-knob
+              [(ngModel)]="newSeuil"
+              [valueTemplate]="newSeuil.toFixed(2) + '%'"
+              [size]="200"
+              [step]="0.01"
+              [min]="95"
+              [max]="100"
+              [valueColor]="colorKnob"
+            ></p-knob>
+            <textarea
+              [(ngModel)]="commentaire"
+              placeholder="Commentaire"
+              rows="5"
+              cols="30"
+              pInputTextarea
+            ></textarea>
+          </div>
+          <div style="display: flex; justify-content: end; padding-top: 3rem; gap: 1rem">
+            <p-button
+              label="Annuler"
+              severity="secondary"
+              (onClick)="seuilDialogVisible = false"
+            />
+            <p-button label="Sauvegarder" (onClick)="seuilDialogVisible = false" />
+          </div>
+        </p-dialog>
+        <p-button
+          [ngStyle]="{ 'margin-right': '2rem' }"
+          (onClick)="confirm1($event)"
+          label="Valider"
+          severity="success"
+        />
+        <p-button
+          [ngStyle]="{ 'margin-right': '1.9rem', 'white-space': 'nowrap' }"
+          (onClick)="showDialog()"
+          label="Donner un nouveau seuil"
+        />
+        <p-button (onClick)="confirm2($event)" label="Rejeter" severity="danger" />
+      </div>
+    </div>
+    <div class="donuts-container">
+      <p-chart type="doughnut" [data]="chartsData" [options]="options" />
+    </div>
+  </div>
+</p-sidebar>
+<p-dialog
+  header="Articles manquant"
+  [modal]="true"
+  [(visible)]="dialogVisible"
+  [position]="'right'"
+>
+  <div
+    class="product-container"
+    [ngStyle]="{ 'background-color': selectedColor }"
+    *ngFor="let detail of detailData"
+  >
+    <h3 style="padding: 1rem 0">
+      {{ detail.countEan }} article{{ detail.countEan > 1 ? "s" : "" }}
+    </h3>
+    <img [src]="detail.photoUrl" alt="" />
+  </div>
+</p-dialog>

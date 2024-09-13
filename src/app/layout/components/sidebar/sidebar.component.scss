@@ -1,6 +1,7 @@
 @import "../../../../assets/scss/utils/variables.scss";
 
 .sidebar {
+  z-index: 100;
   width: var(--sidebar-width);
   position: fixed;
   left: 0;
