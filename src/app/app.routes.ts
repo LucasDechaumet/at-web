@@ -4,9 +4,8 @@ import { LayoutComponent } from "./layout/layout.component";
 export const routes: Routes = [
   {
     path: "",
-    redirectTo: "stock",
+    redirectTo: "login",
     pathMatch: "full",
-    data: { title: "Stock" },
   },
   {
     path: "",
@@ -35,6 +34,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import("./pages/mouvement/mouvement.component").then(
             (m) => m.MouvementComponent
+          ),
+      },
+      {
+        path: "historique",
+        title: "SmartPinWeb - Historique",
+        data: { title: "Historique" },
+        loadComponent: () =>
+          import("./pages/historique/historique.component").then(
+            (m) => m.HistoriqueComponent
           ),
       },
       {
@@ -134,14 +142,43 @@ export const routes: Routes = [
                 "./pages/parametres-generaux/components/seuil-inventaire/seuil-inventaire.component"
               ).then((m) => m.SeuilInventaireComponent),
           },
+          {
+            path: "param-algo",
+            title: "SmartPinWeb - Paramètres Algorithmes",
+            data: { title: "Paramètres Généraux > Inventaire > Algorithmes" },
+            loadComponent: () =>
+              import(
+                "./pages/parametres-generaux/components/param-algo/param-algo.component"
+              ).then((m) => m.ParamAlgoComponent),
+          },
+          {
+            path: "motif-mouvement",
+            title: "SmartPinWeb - Motif Mouvement",
+            data: { title: "Paramètres Généraux > Mouvement > Motif" },
+            loadComponent: () =>
+              import(
+                "./pages/parametres-generaux/components/motif-mouvement/motif-mouvement.component"
+              ).then((m) => m.MotifMouvementComponent),
+          },
         ],
       },
       {
-        path: "pda",
-        title: "SmartPinWeb - Débloquer PDA",
-        data: { title: "Débloquer PDA" },
+        path: "demandes-pda",
+        title: "SmartPinWeb - Demandes relatives aux PDA",
+        data: { title: "Demandes relatives aux PDA" },
         loadComponent: () =>
-          import("./pages/pda/pda.component").then((m) => m.PdaComponent),
+          import("./pages/pda/demandes-pda/demandes-pda.component").then(
+            (m) => m.DemandesPdaComponent
+          ),
+      },
+      {
+        path: "liste-pda",
+        title: "SmartPinWeb - Liste des PDA",
+        data: { title: "Liste des PDA" },
+        loadComponent: () =>
+          import("./pages/pda/liste-pda/liste-pda.component").then(
+            (m) => m.ListePdaComponent
+          ),
       },
       {
         path: "guide-utilisateur",
@@ -169,10 +206,18 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/login/login.component").then((m) => m.LoginComponent),
   },
+  {
+    path: "reset-password",
+    title: "SmartPinWeb - Reset Password",
+    loadComponent: () =>
+      import("./pages/reset-password/reset-password.component").then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
 
   // Routes inconnues
   {
     path: "**",
-    redirectTo: "stock",
+    redirectTo: "login",
   },
 ];

@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Renderer2,
-  ViewChild,
-  inject,
-} from "@angular/core";
+import { Component, ElementRef, Renderer2, ViewChild, inject } from "@angular/core";
 import { SidebarService } from "./sidebar.service";
 import { ISidebarItem } from "./ISidebarItem";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
@@ -41,6 +35,11 @@ export class SidebarComponent {
           title: "Mouvement",
           icon: "pi-arrow-right-arrow-left",
           path: "/mouvement",
+        },
+        {
+          title: "Historique",
+          icon: "pi-history",
+          path: "/historique",
         },
       ],
     },
@@ -106,19 +105,9 @@ export class SidebarComponent {
       title: "Admin",
       children: [
         {
-          title: "Gestion des Utilisateurs",
-          icon: "pi-user-edit",
-          path: "/utilisateurs",
-        },
-        {
           title: "Gestion des Accès",
           icon: "pi-key",
           path: "/acces",
-        },
-        {
-          title: "Gestion des Magasins",
-          icon: "pi-shop",
-          path: "/magasins",
         },
         {
           title: "Paramètres Généraux",
@@ -133,7 +122,23 @@ export class SidebarComponent {
         {
           title: "PDA",
           icon: "pi-mobile",
-          path: "/pda",
+          children: [
+            {
+              title: "Demande code PIN",
+              icon: "pi-bell",
+              path: "/demandes-pda",
+            },
+            {
+              title: "Liste des PDA",
+              icon: "pi-mobile",
+              path: "/liste-pda",
+            },
+          ],
+        },
+        {
+          title: "Gestion des Utilisateurs",
+          icon: "pi-user-edit",
+          path: "/utilisateurs",
         },
       ],
     },
@@ -165,9 +170,7 @@ export class SidebarComponent {
     logoSingle: "https://cdn.armandthiery.fr/ximg/logoSticky.svg",
   };
   logoPath: string =
-    window.innerWidth > 991
-      ? this.logoPaths.logoSingle
-      : this.logoPaths.logoFull;
+    window.innerWidth > 991 ? this.logoPaths.logoSingle : this.logoPaths.logoFull;
   constructor(private renderer: Renderer2, private authService: AuthService) {
     /**
      * This events get called by all clicks on the page
@@ -189,9 +192,7 @@ export class SidebarComponent {
 
   onHoverSidebar(state: boolean) {
     if (!this.sidebarService.getSidebarState) {
-      this.logoPath = state
-        ? this.logoPaths.logoFull
-        : this.logoPaths.logoSingle;
+      this.logoPath = state ? this.logoPaths.logoFull : this.logoPaths.logoSingle;
     }
   }
 

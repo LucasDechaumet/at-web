@@ -2,10 +2,13 @@
   [value]="permissions"
   styleClass="p-datatable-striped p-datatable-sm"
   [tableStyle]="{ 'min-width': '50rem', cursor: 'pointer' }"
+  [scrollable]="true"
+  scrollHeight="calc(100vh - 30px)"
+  [loading]="loading"
 >
   <ng-template pTemplate="header">
     <tr>
-      <th style="min-width: 100px">Permission</th>
+      <th style="min-width: 100px">Description</th>
       <th *ngFor="let role of roles" style="width: auto; text-align: center">
         {{ role | titlecase }}
       </th>
@@ -13,24 +16,33 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-permission>
-    <!-- Utilisez [attr.colspan] au lieu de colspan -->
-    <ng-container *ngIf="permission.isCategoryHeader">
-      <tr class="category-header">
-        <td [attr.colspan]="roles.length + 1" style="font-weight: bold; text-align: left">
-          {{ permission.name }}
-        </td>
-      </tr>
-    </ng-container>
+    <!-- Afficher l'en-tête de catégorie -->
+    <tr *ngIf="permission.isCategoryHeader">
+      <td [attr.colspan]="roles.length + 1" style="font-weight: bold; text-align: left">
+        {{ permission.name }}
+      </td>
+    </tr>
 
     <!-- Afficher les permissions sous chaque catégorie -->
     <tr *ngIf="!permission.isCategoryHeader">
-      <td>{{ permission.name }}</td>
+      <td>{{ permission.description }}</td>
       <td *ngFor="let role of roles" style="text-align: center">
+        <!-- Utiliser l'événement mousedown pour gérer avant que la case ne change d'état -->
         <p-checkbox
-          [(ngModel)]="permission[role.toLowerCase().replace('-', '')]"
+          [(ngModel)]="permission[role.toLowerCase()]"
           binary="true"
+          (mousedown)="onRoleChange($event, permission, role)"
         ></p-checkbox>
       </td>
     </tr>
   </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="roles.length + 1">Aucune donnée</td>
+    </tr>
+  </ng-template>
 </p-table>
+
+<p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>

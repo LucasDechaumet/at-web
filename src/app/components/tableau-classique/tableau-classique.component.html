@@ -63,37 +63,54 @@
         *ngFor="let col of columns"
         [ngStyle]="{ flex: '1 1 auto', 'min-width': '50px', 'max-width': '300px' }"
       >
-        <ng-container
-          *ngIf="col.field.includes('At') || col.field.includes('date'); else otherField"
-        >
-          {{ product[col.field] | dateFormat }}
+        <ng-container *ngIf="col.field === 'state'; else otherFields">
+          <p-toggleButton
+            [ngModel]="getIsLocked(product)"
+            onLabel="Bloqué"
+            offLabel="Débloqué"
+            [onIcon]="'pi pi-lock'"
+            offIcon="pi pi-lock-open"
+            [style]="{ height: '1rem' }"
+            (ngModelChange)="onToggleChange(product)"
+            ariaLabel="Change User Status"
+          ></p-toggleButton>
         </ng-container>
 
-        <ng-template #otherField>
-          <ng-container *ngIf="col.field === 'status'; else percentageField">
-            <p-tag
-              [value]="getStatusLabel(product[col.field])"
-              [severity]="getSeverity(product[col.field])"
-              [rounded]="true"
-            ></p-tag>
+        <ng-template #otherFields>
+          <ng-container
+            *ngIf="
+              col.field.includes('At') || col.field.includes('date');
+              else otherField
+            "
+          >
+            {{ product[col.field] | dateFormat }}
           </ng-container>
 
-          <ng-template #percentageField>
-            <ng-container
-              *ngIf="
-                col.field === 'pourcentage' &&
-                  product[col.field] !== null &&
-                  product[col.field] !== undefined;
-                else defaultContent
-              "
-            >
-              {{ product[col.field] | number : "1.2-2" }}%
+          <ng-template #otherField>
+            <ng-container *ngIf="col.field === 'status'; else percentageField">
+              <p-tag
+                [value]="getStatusLabel(product[col.field])"
+                [severity]="getSeverity(product[col.field])"
+              ></p-tag>
             </ng-container>
 
-            <ng-template #defaultContent>
-              <div class="comment-container" [title]="product[col.field]">
-                {{ product[col.field] }}
-              </div>
+            <ng-template #percentageField>
+              <ng-container
+                *ngIf="
+                  col.field === 'pourcentage' &&
+                    product[col.field] !== null &&
+                    product[col.field] !== undefined;
+                  else defaultContent
+                "
+              >
+                {{ product[col.field] | number : "1.2-2" }}%
+              </ng-container>
+
+              <ng-template #defaultContent>
+                <div class="comment-container" [title]="product[col.field]">
+                  {{ product[col.field] }}
+                </div>
+              </ng-template>
             </ng-template>
           </ng-template>
         </ng-template>
@@ -103,7 +120,7 @@
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td [attr.colspan]="columns.length">Aucunes données</td>
+      <td [attr.colspan]="columns.length">Aucune donnée</td>
     </tr>
   </ng-template>
 </p-table>

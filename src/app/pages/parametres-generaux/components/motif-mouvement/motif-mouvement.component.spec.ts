@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MouvementComponent } from './mouvement.component';
+import { MotifMouvementComponent } from './motif-mouvement.component';
 
-describe('MouvementComponent', () => {
-  let component: MouvementComponent;
-  let fixture: ComponentFixture<MouvementComponent>;
+describe('MotifMouvementComponent', () => {
+  let component: MotifMouvementComponent;
+  let fixture: ComponentFixture<MotifMouvementComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MouvementComponent]
+      imports: [MotifMouvementComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(MouvementComponent);
+    fixture = TestBed.createComponent(MotifMouvementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

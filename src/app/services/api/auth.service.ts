@@ -14,6 +14,7 @@ export class AuthService {
   signIn(email: string, password: string): Observable<any> {
     return this.http.post<any>("auth/authenticate", { email, password }).pipe(
       map((response) => {
+        console.log("response", response);
         if (response.token) {
           this.setToken(response.token);
           return { success: true, token: response.token };

@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { HeaderSharedDataService } from "../../services/data-shared/header-shared-data.service";
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { TagModule } from "primeng/tag";
-import { Status } from "../../enums/status";
+import { ToggleButtonModule } from "primeng/togglebutton";
 
 @Component({
   selector: "app-tableau-classique",
@@ -26,6 +26,7 @@ import { Status } from "../../enums/status";
     InputSwitchModule,
     DateFormatPipe,
     TagModule,
+    ToggleButtonModule,
   ],
   templateUrl: "./tableau-classique.component.html",
   styleUrl: "./tableau-classique.component.scss",
@@ -37,6 +38,7 @@ export class TableauClassiqueComponent implements OnInit {
   @Input() enableColumnFilters: boolean = true;
   @Output() tableFilter = new EventEmitter<any>();
   @Output() rowClicked = new EventEmitter<any>();
+  @Output() toggleChange = new EventEmitter<any>();
 
   globalFilterFields: string[] = [];
   numberOfItems: number = 0;
@@ -89,8 +91,16 @@ export class TableauClassiqueComponent implements OnInit {
     }
   }
 
+  getIsLocked(product: any): boolean {
+    return !product.enabled;
+  }
+
   onRowClicked(product: any) {
     this.rowClicked.emit(product);
+  }
+
+  onToggleChange(product: any) {
+    this.toggleChange.emit(product);
   }
 
   onTableFilter(filteredData: any[]) {

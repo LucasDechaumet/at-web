@@ -1,0 +1,30 @@
+<p-table
+  #dt1
+  [value]="pdaData"
+  styleClass="p-datatable-striped p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem', cursor: 'pointer' }"
+  [loading]="loading"
+  [scrollable]="true"
+  scrollHeight="calc(100vh - 30px)"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Device ID</th>
+      <th>Store ID</th>
+      <th>App Version</th>
+      <th>Créer le</th>
+      <th>Dernière connexion</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-pda>
+    <tr>
+      <td>{{ pda.id }}</td>
+      <td>{{ pda.deviceId }}</td>
+      <td>{{ pda.storeId }}</td>
+      <td>{{ pda.appVersion }}</td>
+      <td>{{ pda.createdAt | date : "dd/MM/yyyy HH:mm" }}</td>
+      <td>{{ pda.updatedAt | date : "dd/MM/yyyy HH:mm" }}</td>
+    </tr>
+  </ng-template>
+</p-table>

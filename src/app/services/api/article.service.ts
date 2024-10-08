@@ -20,4 +20,8 @@ export class ArticleService {
   getPhotoUrlByEan(ean: string): Observable<string> {
     return this.http.getText(`${this.baseUrl}/getPhotoUrlByEan/${ean}`);
   }
+
+  getArticleByEan(ean: string): Observable<Article> {
+    return this.http.get<Article>(`${this.baseUrl}/getArticleByEan/${ean}`);
+  }
 }

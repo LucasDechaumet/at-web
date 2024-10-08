@@ -1,0 +1,143 @@
+<p-table
+  #dt1
+  [value]="products"
+  styleClass="p-datatable-striped p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem', cursor: 'pointer' }"
+  selectionMode="single"
+  [loading]="loading"
+  [scrollable]="true"
+  scrollHeight="calc(100vh - 95px)"
+  [rows]="20"
+  [virtualScroll]="true"
+  [virtualScrollItemSize]="32"
+  [lazy]="true"
+  (onLazyLoad)="loadHistoriesLazy($event)"
+>
+  <ng-template pTemplate="caption">
+    <div style="display: flex; gap: 1rem">
+      <p-iconField iconPosition="left">
+        <p-inputIcon>
+          <i class="pi pi-search"></i>
+        </p-inputIcon>
+        <input
+          pInputText
+          type="text"
+          (input)="dt1.filterGlobal($any($event.target).value, 'contains')"
+          placeholder="Rechercher"
+          style="height: 2rem"
+        />
+      </p-iconField>
+      <p-calendar
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [readonlyInput]="true"
+        [iconDisplay]="'input'"
+        [showIcon]="true"
+        inputId="icondisplay"
+        dateFormat="dd/mm/yy"
+        [style]="{ height: '2rem' }"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr style="height: 2rem">
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Date</span>
+          <p-columnFilter
+            type="text"
+            field="date"
+            [showMenu]="false"
+            ariaLabel="Filter Date"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Magasin</span>
+          <p-columnFilter
+            type="text"
+            field="magasin"
+            [showMenu]="false"
+            ariaLabel="Filter Magasin"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Type</span>
+          <p-columnFilter
+            type="text"
+            field="type"
+            [showMenu]="false"
+            ariaLabel="Filter Type"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Code</span>
+          <p-columnFilter
+            type="text"
+            field="code"
+            [showMenu]="false"
+            ariaLabel="Filter Code"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Produit</span>
+          <p-columnFilter
+            type="text"
+            field="produit"
+            [showMenu]="false"
+            ariaLabel="Filter Produit"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Epc</span>
+          <p-columnFilter
+            type="text"
+            field="epc"
+            [showMenu]="false"
+            ariaLabel="Filter Epc"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <span>Ean</span>
+          <p-columnFilter
+            type="text"
+            field="ean"
+            [showMenu]="false"
+            ariaLabel="Filter Ean"
+            style="margin-left: 8px"
+          ></p-columnFilter>
+        </div>
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-product>
+    <tr style="height: 2rem">
+      <td>{{ product.createdAt }}</td>
+      <td>{{ product.storeId }}</td>
+      <td>{{ product.epc }}</td>
+      <td>{{ product.ean }}</td>
+      <td>{{ product.typeMvt }}</td>
+      <td>{{ product.codeMvt }}</td>
+      <td>{{ product.libProduit }}</td>
+    </tr>
+  </ng-template>
+</p-table>

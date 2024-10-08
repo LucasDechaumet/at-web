@@ -1,1 +1,9 @@
-<p>utilisateurs works!</p>
+<app-tableau-classique
+  [columns]="columns"
+  [currentData]="userData"
+  [loading]="loading"
+  [enableColumnFilters]="false"
+  (toggleChange)="onToggleChange($event)"
+></app-tableau-classique>
+
+<p-toast />

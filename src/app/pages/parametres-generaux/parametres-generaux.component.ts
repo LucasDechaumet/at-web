@@ -30,19 +30,26 @@ export class ParametresGenerauxComponent implements OnInit {
             },
           },
           {
-            label: "Delai de sauvegarde",
-            icon: "pi pi-save",
+            label: "Paramètres de l'algorithme",
+            icon: "pi pi-calculator",
             command: () => {
-              this.router.navigate(["parametres-generaux/delai-sauvegarde"]);
+              this.router.navigate(["parametres-generaux/param-algo"]);
             },
           },
         ],
       },
       {
         label: "Synchronisation",
-        icon: "pi pi-tag",
+        icon: "pi pi-sync",
         command: () => {
           this.router.navigate(["parametres-generaux/delai-sauvegarde"]);
+        },
+      },
+      {
+        label: "Motif de mouvement",
+        icon: "pi pi-tag",
+        command: () => {
+          this.router.navigate(["parametres-generaux/motif-mouvement"]);
         },
       },
     ];

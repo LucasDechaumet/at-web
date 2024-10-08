@@ -1,0 +1,20 @@
+/* Cible les éléments input à l'intérieur des p-columnFilter */
+::ng-deep .p-column-filter input.p-inputtext {
+  height: 20px; /* Définit la hauteur des champs de filtre à 20px */
+  line-height: 20px; /* Assure que le texte est centré verticalement */
+  padding: 0; /* Supprime le padding si nécessaire pour respecter la hauteur */
+}
+
+/* Optionnel : Cible le th contenant le p-columnFilter pour ajuster son alignement */
+::ng-deep .p-datatable-thead > tr > th .p-column-filter {
+  height: 20px; /* Définit également la hauteur de la cellule contenant le filtre */
+  padding: 0; /* Supprime le padding si nécessaire */
+}
+
+.comment-container {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Ajustez cette largeur selon vos besoins */
+  display: inline-block;
+}

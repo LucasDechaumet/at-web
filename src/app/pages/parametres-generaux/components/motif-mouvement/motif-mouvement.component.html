@@ -1,0 +1,189 @@
+<p-table
+  [value]="products"
+  editMode="row"
+  dataKey="id"
+  styleClass="p-datatable-striped p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem', cursor: 'pointer' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Type</th>
+      <th>Label</th>
+      <th>Code</th>
+      <th>ID store_group</th>
+      <th>Commentaire</th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="product">
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="number" [(ngModel)]="product.pourcentageInventaire" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ product.pourcentageInventaire }}%
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="number" [(ngModel)]="product.nombreInventaire" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ product.nombreInventaire }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="number" [(ngModel)]="product.delaiInventaire" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ product.delaiInventaire }} jours
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <div style="display: flex">
+          <button
+            *ngIf="!editing"
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-pencil"
+            (click)="onRowEditInit(product)"
+            class="p-button-rounded p-button-text"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pSaveEditableRow
+            icon="pi pi-check"
+            (click)="onRowEditSave(product)"
+            class="p-button-rounded p-button-text p-button-success mr-2"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pCancelEditableRow
+            icon="pi pi-times"
+            (click)="onRowEditCancel(product, ri)"
+            class="p-button-rounded p-button-text p-button-danger mr-2"
+          ></button>
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-trash"
+            (click)="onDelete(product)"
+            class="p-button-rounded p-button-text p-button-danger"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<p-toast></p-toast>
+
+<p-speedDial [model]="items" direction="up" class="speed-dial-custom"></p-speedDial>
+
+<app-modal-save-cancel
+  (save)="onSave()"
+  (cancel)="onCancel()"
+  [header]="'Ajout d\'un paramètre'"
+  [displayDialog]="displayDialog"
+  [width]="'20rem'"
+>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      min-height: 20rem;
+      justify-content: space-between;
+    "
+  >
+    <div class="content" style="gap: 1rem; display: flex; flex-direction: column">
+      <br />
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-percentage" />
+          <input
+            pInputText
+            type="number"
+            min="80"
+            max="100"
+            placeholder="Pourcentage"
+            [(ngModel)]="newMotif.item_type"
+          />
+        </p-iconField>
+      </div>
+      <br />
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-sort-numeric-up" />
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Nombre d'inventaire"
+            [(ngModel)]="newMotif.label"
+          />
+        </p-iconField>
+      </div>
+      <br />
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-clock" />
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Délai"
+            [(ngModel)]="newMotif.code"
+          />
+        </p-iconField>
+      </div>
+      <br />
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-clock" />
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Délai"
+            [(ngModel)]="newMotif.id_storegroup"
+          />
+        </p-iconField>
+      </div>
+      <br />
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-clock" />
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Délai"
+            [(ngModel)]="newMotif.comment"
+          />
+        </p-iconField>
+      </div>
+    </div>
+  </div>
+</app-modal-save-cancel>
+
+<p-confirmDialog></p-confirmDialog>

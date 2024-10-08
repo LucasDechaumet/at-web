@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { TableauClassiqueComponent } from "../../components/tableau-classique/tableau-classique.component";
 import { SpeedDialModule } from "primeng/speeddial";
 import { Message, MessageService } from "primeng/api";
@@ -16,6 +16,10 @@ import { CommonModule } from "@angular/common";
 import { MvtMotifService } from "../../services/api/mvt-motif.service";
 import { TableModule } from "primeng/table";
 import { BadgeModule } from "primeng/badge";
+import { ArticleService } from "../../services/api/article.service";
+import { HeaderSharedDataService } from "../../services/data-shared/header-shared-data.service";
+import { HistoryService } from "../../services/api/history.service";
+import { SidebarModule } from "primeng/sidebar";
 
 @Component({
   selector: "app-mouvement",
@@ -34,6 +38,7 @@ import { BadgeModule } from "primeng/badge";
     MessagesModule,
     TableModule,
     BadgeModule,
+    SidebarModule,
   ],
   templateUrl: "./mouvement.component.html",
   styleUrls: ["./mouvement.component.scss"],
@@ -41,11 +46,11 @@ import { BadgeModule } from "primeng/badge";
 })
 export class MouvementComponent implements OnInit {
   columns = [
-    { field: "numero", header: "Numéro" },
-    { field: "motif", header: "Motif" },
-    { field: "Date", header: "Date" },
-    { field: "refQuantité", header: "Ref Quantité" },
-    { field: "prodQuantité", header: "Prod Quantité" },
+    { field: "codeMvt", header: "Motif" },
+    { field: "createdAt", header: "Date" },
+    { field: "libProduit", header: "Produit" },
+    { field: "epc", header: "EPC" },
+    { field: "ean", header: "EAN" },
   ];
   items: any[] = [
     {
@@ -78,82 +83,159 @@ export class MouvementComponent implements OnInit {
       },
     },
   ];
-  data: any[] = [];
+
+  tableData: any[] = [];
   loading: boolean = true;
   displayDialog: boolean = false;
-  qrCodeValue: string = "";
-  barcodeValue: string = "";
   messages: Message[] = [];
-  motif: any[] | undefined;
+  motifs: any[] | undefined;
   selectedMotif: any;
   scannedItem: any[] = [];
-  showQrInput: boolean = false;
-  showBarcodeInput: boolean = false;
+  selectedStore: any;
+  dialogInputValue: string;
+  inputType: string;
+  inputPlaceholder: string;
+  @ViewChild("inputField") inputField: ElementRef;
+  sidebarVisible: boolean = false;
+  selectedProduct: any;
 
   constructor(
     private messageService: MessageService,
     private stockRfidService: StockRfidService,
     private qrCodeService: QrCodeService,
-    private mvtMotifService: MvtMotifService
+    private mvtMotifService: MvtMotifService,
+    private articleService: ArticleService,
+    private headerDataSharedService: HeaderSharedDataService,
+    private historyService: HistoryService
   ) {}
 
   ngOnInit() {
-    this.fetchData();
+    // Example data to add to scannedItem
+    const exampleData1 = {
+      epc: "3039612980A6B842013F6FBF",
+      storeId: 702,
+      statut: "STOCK",
+      ean: "3616381707215",
+      disponible: 1,
+      alarme: null,
+      createdAt: "2024-07-05T14:27:14.000+00:00",
+      emplacement: null,
+      ignored: 0,
+      inStock: 1,
+      libColorisModifie: "10-NOIR",
+      libProduit: "DEBVPARIPLUME",
+      libTaille: "3",
+      origin: "AK",
+      sku: "751301161003",
+      updatedAt: "2024-08-28T10:43:01.000+00:00",
+    };
+
+    const exampleData2 = {
+      epc: "3039612980A6B842013F6FBF2",
+      storeId: 702,
+      statut: "STOCK",
+      ean: "3616381707216",
+      disponible: 1,
+      alarme: null,
+      createdAt: "2024-07-06T14:27:14.000+00:00",
+      emplacement: null,
+      ignored: 0,
+      inStock: 1,
+      libColorisModifie: "12-BLANC",
+      libProduit: "DEBVPARIPLUME",
+      libTaille: "4",
+      origin: "AK",
+      sku: "751301161004",
+      updatedAt: "2024-08-29T10:43:01.000+00:00",
+    };
+
+    const exampleData3 = {
+      epc: "3039612980A6B842013F6FBF3",
+      storeId: 702,
+      statut: "STOCK",
+      ean: "3616381707217",
+      disponible: 1,
+      alarme: null,
+      createdAt: "2024-07-07T14:27:14.000+00:00",
+      emplacement: null,
+      ignored: 0,
+      inStock: 1,
+      libColorisModifie: "14-ROUGE",
+      libProduit: "DEBVPARIPLUME",
+      libTaille: "5",
+      origin: "AK",
+      sku: "751301161005",
+      updatedAt: "2024-08-30T10:43:01.000+00:00",
+    };
+
+    const exampleData4 = {
+      epc: "3039612980A6B842013F6FBF4",
+      storeId: 702,
+      statut: "STOCK",
+      ean: "3616381707218",
+      disponible: 1,
+      alarme: null,
+      createdAt: "2024-07-08T14:27:14.000+00:00",
+      emplacement: null,
+      ignored: 0,
+      inStock: 1,
+      libColorisModifie: "16-VERT",
+      libProduit: "DEBVPARIPLUME",
+      libTaille: "6",
+      origin: "AK",
+      sku: "751301161006",
+      updatedAt: "2024-08-31T10:43:01.000+00:00",
+    };
+
+    // Push the four example objects to scannedItem array
+    this.scannedItem.push(exampleData1, exampleData2, exampleData3, exampleData4);
+
+    // Fetch motifs by item type
     this.mvtMotifService.getMotifsByItemType("MVT.REASON").subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.motif = data;
+        this.motifs = data;
       },
       error: (error) => {
         console.error(error);
       },
     });
-    this.messages = [
-      { severity: "error", detail: "Error Message" },
-      { severity: "info", detail: "Info Message" },
-      { severity: "warn", detail: "Warn Message" },
-      { severity: "success", detail: "Success Message" },
-    ];
-    this.scannedItem = [
-      {
-        alarme: null,
-        createdAt: "2024-07-05T14:27:14.000+00:00",
-        disponible: 1,
-        ean: "3616381707215",
-        emplacement: null,
-        epc: "3039612980A6B842013F6FBF",
-        ignored: 0,
-        inStock: 1,
-        libColorisModifie: "10-NOIR",
-        libProduit: "DEBVPARIPLUME",
-        libTaille: "3",
-        origin: "AK",
-        sku: "751301161003",
-        statut: "STOCK",
-        storeId: 702,
-        updatedAt: "2024-08-28T10:43:01.000+00:00",
-      },
-    ];
+
+    // Subscribe to store data
+    this.headerDataSharedService.dataStore$.subscribe((data) => {
+      this.selectedStore = data;
+    });
+
+    this.fetchData();
   }
 
   onMotifChange() {
-    console.log("selectedMotif:", this.selectedMotif);
-    this.checkInputVisibility();
-  }
+    this.scannedItem = [];
+    this.dialogInputValue = "";
 
-  checkInputVisibility() {
     if (this.selectedMotif) {
       if (this.selectedMotif.code === "55" || this.selectedMotif.code === "54") {
-        this.showQrInput = true;
-        this.showBarcodeInput = false;
-      } else if (this.selectedMotif.code === "111") {
-        this.showQrInput = false;
-        this.showBarcodeInput = true;
+        this.inputType = "qr";
+        this.inputPlaceholder = "QR code";
       } else {
-        this.showQrInput = false;
-        this.showBarcodeInput = false;
+        this.inputType = "barcode";
+        this.inputPlaceholder = "Code barre";
       }
     }
+
+    setTimeout(() => {
+      if (this.inputField?.nativeElement) {
+        this.inputField.nativeElement.focus();
+      }
+    }, 50);
+  }
+
+  getIconStyle() {
+    return this.inputType === "qr" ? "pi pi-qrcode" : "pi pi-barcode";
+  }
+
+  onRowClicked(event: any) {
+    this.sidebarVisible = true;
+    this.selectedProduct = event;
   }
 
   onSave() {
@@ -162,14 +244,37 @@ export class MouvementComponent implements OnInit {
 
   onCancel() {
     this.displayDialog = false;
+    this.scannedItem = []; // Réinitialiser les articles scannés
+    this.dialogInputValue = ""; // Réinitialiser la valeur du champ de saisie
+    this.selectedMotif = null; // Réinitialiser le dropdown à aucun motif sélectionné
+    this.inputType = ""; // Réinitialiser le type d'entrée (QR code ou code-barres)
+    this.inputPlaceholder = ""; // Réinitialiser le placeholder du champ d'entrée
+  }
+
+  onDelete(item: any) {
+    this.scannedItem = this.scannedItem.filter((i) => i !== item);
+    this.messageService.add({
+      severity: "warn",
+      summary: "Supprimé",
+      detail: `L'article ${item.libProduit} a été supprimé`,
+    });
   }
 
   fetchData() {
-    this.loading = false;
+    this.historyService.getHistoriesByType("mouvement", this.selectedStore.id).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.tableData = data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+      },
+    });
   }
 
   getDisponibilityByCode() {
-    console.log("selectedMotif:", this.selectedMotif);
     switch (this.selectedMotif.code) {
       case "54":
         return 1;
@@ -182,31 +287,53 @@ export class MouvementComponent implements OnInit {
     }
   }
 
-  verifyAvailabilityEpc(epc: any) {
+  verifyAvailabilityEpc(epc: any): boolean {
     const epcDisponibility = this.getDisponibilityByCode();
     if (epcDisponibility == epc.disponible) {
-      console.log("EPC is available");
-      this.scannedItem.push(epc);
+      return true;
     } else {
-      console.log("EPC is not available");
+      return false;
     }
-    document.getElementById("qrCodeInput")?.focus();
   }
 
   onEnterPress() {
-    const result = this.qrCodeService.getEpcAndEanFromQrCode(this.qrCodeValue);
-    this.qrCodeValue = "";
-    if (result) {
-      this.stockRfidService.getStockRfidByEpc(result["epc"]).subscribe({
-        next: (data) => {
-          console.log(data);
-          this.verifyAvailabilityEpc(data);
-          console.log(this.scannedItem);
-        },
-        error: (error) => {
-          console.error(error);
-        },
-      });
+    if (this.inputType === "qr") {
+      this.isQrCodeUrl(this.dialogInputValue)
+        ? this.handleQrCode(this.dialogInputValue, this.getDisponibilityByCode())
+        : console.log("Invalid QR code URL");
+      this.dialogInputValue = "";
+    } else if (this.inputType === "barcode") {
+      this.isQrCodeUrl(this.dialogInputValue)
+        ? console.log("Barcode non valide (QR code detected)")
+        : console.log("Barcode entered:", this.dialogInputValue);
+      this.dialogInputValue = "";
     }
+  }
+
+  handleQrCode(qrCodeValue: string, disponible: number) {
+    const qrCodeData = this.qrCodeService.getEpcAndEanFromQrCode(qrCodeValue);
+
+    if (qrCodeData) {
+      const epc = qrCodeData["epc"];
+      this.stockRfidService
+        .verifyAvailability(epc, this.selectedStore.id, disponible)
+        .subscribe({
+          next: (data: any) => {
+            this.scannedItem.push(data);
+          },
+          error: (error) => {
+            console.error(error);
+          },
+        });
+    } else {
+      console.error("Invalid QR code or data not found.");
+    }
+  }
+
+  handleBarcode() {}
+
+  isQrCodeUrl(value: string): boolean {
+    const regex = /^https:\/\/[^\s/$.?#].[^\s]*$/i; // Regex pour vérifier une URL commençant par https://
+    return regex.test(value);
   }
 }

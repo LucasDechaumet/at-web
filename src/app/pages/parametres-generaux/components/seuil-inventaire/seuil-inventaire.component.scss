@@ -1,3 +1,10 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  justify-content: center;
+}
+
 .knob-container {
   display: flex;
   flex-wrap: wrap;

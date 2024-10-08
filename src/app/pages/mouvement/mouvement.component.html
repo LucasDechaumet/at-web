@@ -1,7 +1,8 @@
 <app-tableau-classique
   [columns]="columns"
-  [currentData]="data"
+  [currentData]="tableData"
   [loading]="loading"
+  (rowClicked)="onRowClicked($event)"
 ></app-tableau-classique>
 
 <p-speedDial [model]="items" direction="up" class="speed-dial-custom"></p-speedDial>
@@ -13,61 +14,48 @@
   [displayDialog]="displayDialog"
   [width]="'60rem'"
 >
-  <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem">
-    <h3>Motif du mouvement</h3>
-    <p-dropdown
-      [options]="motif"
-      [(ngModel)]="selectedMotif"
-      optionLabel="label"
-      placeholder="Choisir un motif"
-      class="custom-dropdown"
-      (onChange)="onMotifChange()"
-    />
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 1rem">
-    <!-- Afficher le champ QR code uniquement si showQrInput est vrai -->
-    <div *ngIf="showQrInput">
-      <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-qrcode" />
-        <input
-          #qrCodeInput
-          (keydown.enter)="onEnterPress()"
-          type="text"
-          [(ngModel)]="qrCodeValue"
-          pInputText
-          placeholder="QR code"
-        />
-      </p-iconField>
+  <div style="display: flex; flex-direction: column; gap: 1rem">
+    <div style="display: flex; gap: 1rem; align-items: center">
+      <h3>Motif du mouvement</h3>
+      <p-dropdown
+        [options]="motifs"
+        [(ngModel)]="selectedMotif"
+        optionLabel="label"
+        placeholder="Choisir un motif"
+        class="custom-dropdown"
+        (onChange)="onMotifChange()"
+      ></p-dropdown>
     </div>
+    <div *ngIf="selectedMotif" style="display: flex; align-items: center; gap: 1rem">
+      <!-- Un seul champ d'entrée pour QR code ou Code-barres, en fonction du motif sélectionné -->
+      <div>
+        <p-iconField iconPosition="left">
+          <p-inputIcon [styleClass]="getIconStyle()" />
+          <input
+            #inputField
+            (keydown.enter)="onEnterPress()"
+            type="text"
+            [(ngModel)]="dialogInputValue"
+            pInputText
+            placeholder="Saisir le {{ inputPlaceholder }}"
+          />
+        </p-iconField>
+      </div>
 
-    <!-- Afficher le champ Code barre uniquement si showBarcodeInput est vrai -->
-    <div *ngIf="showBarcodeInput">
-      <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-barcode" />
-        <input
-          #barcodeInput
-          (keydown.enter)="onEnterPress()"
-          type="text"
-          [(ngModel)]="barcodeValue"
-          pInputText
-          placeholder="Code barre"
-        />
-      </p-iconField>
-    </div>
-
-    <!-- Afficher le nombre d'article dans le tableau scannedEpc -->
-    <div
-      *ngIf="scannedItem && scannedItem.length > 0"
-      style="display: flex; align-items: center; gap: 1rem"
-    >
-      <h3>Articles scannés</h3>
-      <p-badge
-        *ngIf="scannedItem && scannedItem.length > 0"
-        [value]="scannedItem.length"
-        severity="info"
-        styleClass="p-mr-2"
-      ></p-badge>
+      <!-- Afficher le nombre d'articles scannés -->
+      <div
+        *ngIf="scannedItem.length >= 0"
+        style="display: flex; align-items: center; gap: 1rem"
+      >
+        <h3>
+          {{ scannedItem.length <= 1 ? "article scanné" : "articles scannés" }}
+        </h3>
+        <p-badge
+          [value]="scannedItem.length"
+          severity="info"
+          styleClass="p-mr-2"
+        ></p-badge>
+      </div>
     </div>
   </div>
 
@@ -79,12 +67,13 @@
   ></p-messages>
 
   <p-table
-    *ngIf="scannedItem && scannedItem.length > 0"
+    #dt2
+    *ngIf="scannedItem.length > 0"
+    styleClass="p-datatable-striped p-datatable-sm"
     [value]="scannedItem"
     [tableStyle]="{ 'min-width': '50rem' }"
     [scrollable]="true"
     scrollHeight="20rem"
-    styleClass="p-datatable-striped p-datatable-sm"
     [style]="{ 'padding-top': '1rem' }"
   >
     <ng-template pTemplate="header">
@@ -92,14 +81,58 @@
         <th>Produit</th>
         <th>Couleur</th>
         <th>Taille</th>
+        <th style="width: 3rem"></th>
+        <!-- Colonne très petite pour l'icône -->
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-scannedEpc>
       <tr>
         <td>{{ scannedEpc.libProduit }}</td>
         <td>{{ scannedEpc.libColorisModifie }}</td>
         <td>{{ scannedEpc.libTaille }}</td>
+        <td style="text-align: center; padding: 0">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger"
+            style="width: 24px; height: 24px; padding: 0; margin: 0"
+            (click)="onDelete(scannedEpc)"
+          ></button>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </app-modal-save-cancel>
+
+<p-sidebar [(visible)]="sidebarVisible" position="right" [style]="{ width: '400px' }">
+  <!-- Adjusted width -->
+  <ng-template pTemplate="header">
+    <div>
+      <h4 style="font-weight: bold">{{ selectedProduct?.libProduit }}</h4>
+      <p style="font-size: 0.9rem">
+        {{ selectedProduct?.libColorisModifie }} - {{ selectedProduct?.libTaille }}
+      </p>
+      <p style="font-size: 0.85rem">{{ selectedProduct?.sku }}</p>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="product-details">
+      <div class="product-image">
+        <img
+          [src]="
+            'https://pda.armandthiery.fr/h/' +
+            selectedProduct?.codeproduit +
+            '_' +
+            selectedProduct?.codecoloris +
+            '.jpg'
+          "
+          alt="Photo du produit"
+        />
+      </div>
+      <!-- Add other stock details as needed -->
+    </div>
+  </ng-template>
+</p-sidebar>

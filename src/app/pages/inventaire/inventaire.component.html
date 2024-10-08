@@ -10,8 +10,8 @@
   <ng-template pTemplate="header">
     <span class="header-title">
       Inventaire démarrée le {{ selectedInventory?.createdAt | date : "dd/MM/yyyy" }} à
-      {{ selectedInventory?.createdAt | date : "HH:mm" }}, il est
-      {{ selectedInventory ? wichStatusIs(selectedInventory) : "Inconnu" }} depuis le
+      {{ selectedInventory?.createdAt | date : "HH:mm" }}, il a été
+      {{ selectedInventory ? wichStatusIs(selectedInventory) : "Inconnu" }} le
       {{ selectedInventory?.dateStatus | date : "dd/MM/yyyy" }} à
       {{ selectedInventory?.dateStatus | date : "HH:mm" }}
     </span>
@@ -75,7 +75,7 @@
         <div class="knob-label-container">
           <i
             class="pi pi-info-circle"
-            [style.color]=""
+            style="color: #28a745"
             pTooltip="test"
             tooltipPosition="bottom"
           ></i>
